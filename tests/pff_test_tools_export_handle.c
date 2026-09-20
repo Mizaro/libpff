@@ -33,80 +33,31 @@
 #include <unistd.h>
 #endif
 
-#if defined( WINAPI )
-#include <direct.h>
-#endif
-
 #include "pff_test_libcerror.h"
 #include "pff_test_macros.h"
+#include "pff_test_memory.h"
 #include "pff_test_unused.h"
 
 #include "../pfftools/export_handle.h"
-#include "../pfftools/pfftools_libcpath.h"
 
-#define PFF_TEST_EXPORT_HANDLE_PATH	_SYSTEM_STRING( "pff_test_tools_export_handle.dir" )
-
-/* Removes a directory created by the test
- */
-void pff_test_tools_export_handle_remove_directory(
-      const system_character_t *path )
-{
-	if( path == NULL )
-	{
-		return;
-	}
-#if defined( WINAPI )
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-	_wrmdir(
-	 path );
-#else
-	_rmdir(
-	 path );
-#endif
-#else
-	rmdir(
-	 path );
-#endif
-}
-
-/* Tests that pffexport can name an item directory past 100000 items
+/* Tests the export_handle_initialize function
  * Returns 1 if successful or 0 if not
  */
-int pff_test_tools_export_handle_create_default_item_directory_past_100000(
+int pff_test_tools_export_handle_initialize(
      void )
 {
-	export_handle_t *export_handle               = NULL;
-	libcerror_error_t *error                     = NULL;
-	system_character_t *item_directory_path      = NULL;
-	const system_character_t *expected_suffix    = _SYSTEM_STRING( "Message100001" );
-	size_t expected_suffix_length                = 13;
-	size_t export_path_length                    = 0;
-	size_t item_directory_path_size              = 0;
-	size_t item_directory_path_length            = 0;
-	int result                                   = 0;
-	int suffix_compare_result                    = 0;
+	export_handle_t *export_handle  = NULL;
+	libcerror_error_t *error        = NULL;
+	int result                      = 0;
 
-	export_path_length = system_string_length(
-	                      PFF_TEST_EXPORT_HANDLE_PATH );
-
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-	result = libcpath_path_make_directory_wide(
-	          PFF_TEST_EXPORT_HANDLE_PATH,
-	          &error );
-#else
-	result = libcpath_path_make_directory(
-	          PFF_TEST_EXPORT_HANDLE_PATH,
-	          &error );
+#if defined( HAVE_PFF_TEST_MEMORY )
+	int number_of_malloc_fail_tests = 1;
+	int number_of_memset_fail_tests = 1;
+	int test_number                 = 0;
 #endif
-	PFF_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
 
-	PFF_TEST_ASSERT_IS_NULL(
-	 "error",
-	 error );
-
+	/* Test regular cases
+	 */
 	result = export_handle_initialize(
 	          &export_handle,
 	          &error );
@@ -124,13 +75,244 @@ int pff_test_tools_export_handle_create_default_item_directory_past_100000(
 	 "error",
 	 error );
 
+	result = export_handle_free(
+	          &export_handle,
+	          &error );
+
+	PFF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	PFF_TEST_ASSERT_IS_NULL(
+	 "export_handle",
+	 export_handle );
+
+	PFF_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = export_handle_initialize(
+	          NULL,
+	          &error );
+
+	PFF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	PFF_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	export_handle = (export_handle_t *) 0x12345678UL;
+
+	result = export_handle_initialize(
+	          &export_handle,
+	          &error );
+
+	export_handle = NULL;
+
+	PFF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	PFF_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+#if defined( HAVE_PFF_TEST_MEMORY )
+
+	for( test_number = 0;
+	     test_number < number_of_malloc_fail_tests;
+	     test_number++ )
+	{
+		/* Test export_handle_initialize with malloc failing
+		 */
+		pff_test_malloc_attempts_before_fail = test_number;
+
+		result = export_handle_initialize(
+		          &export_handle,
+		          &error );
+
+		if( pff_test_malloc_attempts_before_fail != -1 )
+		{
+			pff_test_malloc_attempts_before_fail = -1;
+
+			if( export_handle != NULL )
+			{
+				export_handle_free(
+				 &export_handle,
+				 NULL );
+			}
+		}
+		else
+		{
+			PFF_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 -1 );
+
+			PFF_TEST_ASSERT_IS_NULL(
+			 "export_handle",
+			 export_handle );
+
+			PFF_TEST_ASSERT_IS_NOT_NULL(
+			 "error",
+			 error );
+
+			libcerror_error_free(
+			 &error );
+		}
+	}
+	for( test_number = 0;
+	     test_number < number_of_memset_fail_tests;
+	     test_number++ )
+	{
+		/* Test export_handle_initialize with memset failing
+		 */
+		pff_test_memset_attempts_before_fail = test_number;
+
+		result = export_handle_initialize(
+		          &export_handle,
+		          &error );
+
+		if( pff_test_memset_attempts_before_fail != -1 )
+		{
+			pff_test_memset_attempts_before_fail = -1;
+
+			if( export_handle != NULL )
+			{
+				export_handle_free(
+				 &export_handle,
+				 NULL );
+			}
+		}
+		else
+		{
+			PFF_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 -1 );
+
+			PFF_TEST_ASSERT_IS_NULL(
+			 "export_handle",
+			 export_handle );
+
+			PFF_TEST_ASSERT_IS_NOT_NULL(
+			 "error",
+			 error );
+
+			libcerror_error_free(
+			 &error );
+		}
+	}
+#endif /* defined( HAVE_PFF_TEST_MEMORY ) */
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( export_handle != NULL )
+	{
+		export_handle_free(
+		 &export_handle,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the export_handle_free function
+ * Returns 1 if successful or 0 if not
+ */
+int pff_test_tools_export_handle_free(
+     void )
+{
+	libcerror_error_t *error = NULL;
+	int result               = 0;
+
+	/* Test error cases
+	 */
+	result = export_handle_free(
+	          NULL,
+	          &error );
+
+	PFF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	PFF_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the export_handle_create_default_item_directory function
+ * Returns 1 if successful or 0 if not
+ */
+int pff_test_tools_export_handle_create_default_item_directory(
+     void )
+{
+	export_handle_t *export_handle          = NULL;
+	libcerror_error_t *error                = NULL;
+	system_character_t *item_directory_path = NULL;
+	size_t item_directory_path_size         = 0;
+	int result                              = 0;
+
+	/* Initialize test
+	 */
+	result = export_handle_initialize(
+	          &export_handle,
+	          &error );
+
+	PFF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	PFF_TEST_ASSERT_IS_NOT_NULL(
+	 "export_handle",
+	 export_handle );
+
+	PFF_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
 	result = export_handle_create_default_item_directory(
 	          export_handle,
 	          100000,
 	          _SYSTEM_STRING( "Message" ),
 	          7,
-	          PFF_TEST_EXPORT_HANDLE_PATH,
-	          export_path_length,
+	          _SYSTEM_STRING( "." ),
+	          1,
 	          &item_directory_path,
 	          &item_directory_path_size,
 	          NULL,
@@ -149,31 +331,82 @@ int pff_test_tools_export_handle_create_default_item_directory_past_100000(
 	 "error",
 	 error );
 
-	item_directory_path_length = system_string_length(
-	                              item_directory_path );
-
-	PFF_TEST_ASSERT_GREATER_THAN_INT(
-	 "item_directory_path_length",
-	 (int) item_directory_path_length,
-	 (int) expected_suffix_length - 1 );
-
-	suffix_compare_result = system_string_compare(
-	                         &( item_directory_path[ item_directory_path_length - expected_suffix_length ] ),
-	                         expected_suffix,
-	                         expected_suffix_length );
-
-	PFF_TEST_ASSERT_EQUAL_INT(
-	 "suffix_compare_result",
-	 suffix_compare_result,
-	 0 );
-
-	pff_test_tools_export_handle_remove_directory(
+	/* Clean up
+	 */
+#if defined( WINAPI )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+	RemoveDirectoryW(
 	 item_directory_path );
-
+#else
+	RemoveDirectoryA(
+	 item_directory_path );
+#endif
+#else
+	rmdir(
+	 item_directory_path );
+#endif
 	memory_free(
 	 item_directory_path );
 
 	item_directory_path = NULL;
+
+	/* Test error cases
+	 */
+	result = export_handle_create_default_item_directory(
+	          NULL,
+	          0,
+	          _SYSTEM_STRING( "Message" ),
+	          7,
+	          _SYSTEM_STRING( "." ),
+	          1,
+	          &item_directory_path,
+	          &item_directory_path_size,
+	          NULL,
+	          &error );
+
+	PFF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	PFF_TEST_ASSERT_IS_NULL(
+	 "item_directory_path",
+	 item_directory_path );
+
+	PFF_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = export_handle_create_default_item_directory(
+	          export_handle,
+	          -1,
+	          _SYSTEM_STRING( "Message" ),
+	          7,
+	          _SYSTEM_STRING( "." ),
+	          1,
+	          &item_directory_path,
+	          &item_directory_path_size,
+	          NULL,
+	          &error );
+
+	PFF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	PFF_TEST_ASSERT_IS_NULL(
+	 "item_directory_path",
+	 item_directory_path );
+
+	PFF_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
 
 	result = export_handle_free(
 	          &export_handle,
@@ -184,8 +417,13 @@ int pff_test_tools_export_handle_create_default_item_directory_past_100000(
 	 result,
 	 1 );
 
-	pff_test_tools_export_handle_remove_directory(
-	 PFF_TEST_EXPORT_HANDLE_PATH );
+	PFF_TEST_ASSERT_IS_NULL(
+	 "export_handle",
+	 export_handle );
+
+	PFF_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	return( 1 );
 
@@ -197,9 +435,18 @@ on_error:
 	}
 	if( item_directory_path != NULL )
 	{
-		pff_test_tools_export_handle_remove_directory(
+#if defined( WINAPI )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+		RemoveDirectoryW(
 		 item_directory_path );
-
+#else
+		RemoveDirectoryA(
+		 item_directory_path );
+#endif
+#else
+		rmdir(
+		 item_directory_path );
+#endif
 		memory_free(
 		 item_directory_path );
 	}
@@ -209,9 +456,6 @@ on_error:
 		 &export_handle,
 		 NULL );
 	}
-	pff_test_tools_export_handle_remove_directory(
-	 PFF_TEST_EXPORT_HANDLE_PATH );
-
 	return( 0 );
 }
 
@@ -231,8 +475,16 @@ int main(
 	PFF_TEST_UNREFERENCED_PARAMETER( argv )
 
 	PFF_TEST_RUN(
-	 "export_handle_create_default_item_directory_past_100000",
-	 pff_test_tools_export_handle_create_default_item_directory_past_100000 );
+	 "export_handle_initialize",
+	 pff_test_tools_export_handle_initialize );
+
+	PFF_TEST_RUN(
+	 "export_handle_free",
+	 pff_test_tools_export_handle_free );
+
+	PFF_TEST_RUN(
+	 "export_handle_create_default_item_directory",
+	 pff_test_tools_export_handle_create_default_item_directory );
 
 	return( EXIT_SUCCESS );
 

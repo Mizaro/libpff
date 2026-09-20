@@ -48,6 +48,8 @@ int pff_test_tools_output_initialize(
 	libcerror_error_t *error = NULL;
 	int result               = 0;
 
+	/* Test regular cases
+	 */
 	result = pfftools_output_initialize(
 	          _IONBF,
 	          &error );
@@ -61,6 +63,24 @@ int pff_test_tools_output_initialize(
 	 "error",
 	 error );
 
+	/* Test error cases
+	 */
+	result = pfftools_output_initialize(
+	          -1,
+	          &error );
+
+	PFF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	PFF_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
 	return( 1 );
 
 on_error:
@@ -68,6 +88,168 @@ on_error:
 	{
 		libcerror_error_free(
 		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the pfftools_output_copyright_fprint function
+ * Returns 1 if successful or 0 if not
+ */
+int pff_test_tools_output_copyright_fprint(
+     void )
+{
+	FILE *stream = NULL;
+	int result   = 0;
+
+	/* Initialize test
+	 */
+	stream = tmpfile();
+
+	PFF_TEST_ASSERT_IS_NOT_NULL(
+	 "stream",
+	 stream );
+
+	/* Test invocation of function only
+	 */
+	pfftools_output_copyright_fprint(
+	 stream );
+
+	/* Test error cases
+	 */
+	pfftools_output_copyright_fprint(
+	 NULL );
+
+	/* Clean up
+	 */
+	result = fclose(
+	          stream );
+
+	stream = NULL;
+
+	PFF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 0 );
+
+	return( 1 );
+
+on_error:
+	if( stream != NULL )
+	{
+		fclose(
+		 stream );
+	}
+	return( 0 );
+}
+
+/* Tests the pfftools_output_version_fprint function
+ * Returns 1 if successful or 0 if not
+ */
+int pff_test_tools_output_version_fprint(
+     void )
+{
+	FILE *stream = NULL;
+	int result   = 0;
+
+	/* Initialize test
+	 */
+	stream = tmpfile();
+
+	PFF_TEST_ASSERT_IS_NOT_NULL(
+	 "stream",
+	 stream );
+
+	/* Test invocation of function only
+	 */
+	pfftools_output_version_fprint(
+	 stream,
+	 "test" );
+
+	/* Test error cases
+	 */
+	pfftools_output_version_fprint(
+	 NULL,
+	 "test" );
+
+	pfftools_output_version_fprint(
+	 stream,
+	 NULL );
+
+	/* Clean up
+	 */
+	result = fclose(
+	          stream );
+
+	stream = NULL;
+
+	PFF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 0 );
+
+	return( 1 );
+
+on_error:
+	if( stream != NULL )
+	{
+		fclose(
+		 stream );
+	}
+	return( 0 );
+}
+
+/* Tests the pfftools_output_version_detailed_fprint function
+ * Returns 1 if successful or 0 if not
+ */
+int pff_test_tools_output_version_detailed_fprint(
+     void )
+{
+	FILE *stream = NULL;
+	int result   = 0;
+
+	/* Initialize test
+	 */
+	stream = tmpfile();
+
+	PFF_TEST_ASSERT_IS_NOT_NULL(
+	 "stream",
+	 stream );
+
+	/* Test invocation of function only
+	 */
+	pfftools_output_version_detailed_fprint(
+	 stream,
+	 "test" );
+
+	/* Test error cases
+	 */
+	pfftools_output_version_detailed_fprint(
+	 NULL,
+	 "test" );
+
+	pfftools_output_version_detailed_fprint(
+	 stream,
+	 NULL );
+
+	/* Clean up
+	 */
+	result = fclose(
+	          stream );
+
+	stream = NULL;
+
+	PFF_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 0 );
+
+	return( 1 );
+
+on_error:
+	if( stream != NULL )
+	{
+		fclose(
+		 stream );
 	}
 	return( 0 );
 }
@@ -91,15 +273,20 @@ int main(
 	 "pfftools_output_initialize",
 	 pff_test_tools_output_initialize )
 
-	/* TODO add tests for pfftools_output_copyright_fprint */
+	PFF_TEST_RUN(
+	 "pfftools_output_copyright_fprint",
+	 pff_test_tools_output_copyright_fprint )
 
-	/* TODO add tests for pfftools_output_version_fprint */
+	PFF_TEST_RUN(
+	 "pfftools_output_version_fprint",
+	 pff_test_tools_output_version_fprint )
 
-	/* TODO add tests for pfftools_output_version_detailed_fprint */
+	PFF_TEST_RUN(
+	 "pfftools_output_version_detailed_fprint",
+	 pff_test_tools_output_version_detailed_fprint )
 
 	return( EXIT_SUCCESS );
 
 on_error:
 	return( EXIT_FAILURE );
 }
-

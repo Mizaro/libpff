@@ -791,6 +791,7 @@ pff_test_tools_export_handle_SOURCES = \
 	../pfftools/pffinput.c ../pfftools/pffinput.h \
 	pff_test_libcerror.h \
 	pff_test_macros.h \
+	pff_test_memory.c pff_test_memory.h \
 	pff_test_tools_export_handle.c \
 	pff_test_unused.h
 
