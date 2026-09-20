@@ -17,6 +17,7 @@ AM_CPPFLAGS = \
 	@LIBFDATA_CPPFLAGS@ \
 	@LIBFDATETIME_CPPFLAGS@ \
 	@LIBFGUID_CPPFLAGS@ \
+	@LIBFVALUE_CPPFLAGS@ \
 	@LIBFWNT_CPPFLAGS@ \
 	@LIBFMAPI_CPPFLAGS@ \
 	@ZLIB_CPPFLAGS@ \
@@ -95,6 +96,7 @@ check_PROGRAMS = \
 	pff_test_table_block_index \
 	pff_test_table_header \
 	pff_test_table_index_value \
+	pff_test_tools_export_handle \
 	pff_test_tools_info_handle \
 	pff_test_tools_output \
 	pff_test_tools_signal \
@@ -781,6 +783,33 @@ pff_test_table_index_value_SOURCES = \
 pff_test_table_index_value_LDADD = \
 	../libpff/libpff.la \
 	@LIBCERROR_LIBADD@
+
+pff_test_tools_export_handle_SOURCES = \
+	../pfftools/export_handle.c ../pfftools/export_handle.h \
+	../pfftools/item_file.c ../pfftools/item_file.h \
+	../pfftools/log_handle.c ../pfftools/log_handle.h \
+	../pfftools/pffinput.c ../pfftools/pffinput.h \
+	pff_test_libcerror.h \
+	pff_test_macros.h \
+	pff_test_tools_export_handle.c \
+	pff_test_unused.h
+
+pff_test_tools_export_handle_LDADD = \
+	@LIBFMAPI_LIBADD@ \
+	@LIBFVALUE_LIBADD@ \
+	@LIBFWNT_LIBADD@ \
+	@LIBFGUID_LIBADD@ \
+	@LIBFDATETIME_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
+	../libpff/libpff.la \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCERROR_LIBADD@ \
+	@LIBINTL@
 
 pff_test_tools_info_handle_SOURCES = \
 	../pfftools/info_handle.c ../pfftools/info_handle.h \

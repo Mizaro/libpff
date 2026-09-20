@@ -242,7 +242,7 @@ SETUP_HELPER_FUNCTIONS
 
 RUN_TEST_BINARIES(
   [SKIP_TOOLS_TESTS],
-  [tools_info_handle tools_output tools_signal])
+  [tools_export_handle tools_info_handle tools_output tools_signal])
 
 RUN_TEST_PFFTOOL_AND_COMPARE_STDOUT(
   [pffinfo],

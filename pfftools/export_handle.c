@@ -1001,7 +1001,7 @@ int export_handle_create_default_item_directory(
 	               item_index + 1 );
 
 	if( ( print_count < 0 )
-	 || ( (size_t) print_count > ( item_prefix_length + 5 ) ) )
+	 || ( (size_t) print_count >= 64 ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -1012,8 +1012,8 @@ int export_handle_create_default_item_directory(
 
 		goto on_error;
 	}
-	item_directory_name[ item_prefix_length + 5 ] = 0;
-	item_directory_name_length                    = item_prefix_length + 5;
+	item_directory_name[ print_count ] = 0;
+	item_directory_name_length         = (size_t) print_count;
 
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libcpath_path_join_wide(
